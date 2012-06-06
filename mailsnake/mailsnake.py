@@ -1,14 +1,14 @@
+import copy
+import json
+import requests
 import urllib2
 
-from urllib import quote
-
-try:
-    import simplejson as json
-except ImportError:
-    import json
-
 class MailSnake(object):
-    def __init__(self, apikey = '', extra_params = {}, api = 'api'):
+    def __init__(self,
+                 apikey = '',
+                 extra_params = {},
+                 api = 'api',
+                 api_section = ''):
         """
             Cache API key and address.
         """
@@ -16,92 +16,64 @@ class MailSnake(object):
         self.api = api
 
         self.default_params = {'apikey':apikey}
+        if api == 'mandrill':
+            self.default_params = {'key':apikey}
+            if api_section != '':
+                self.api_section = api_section
+            else:
+                # Mandrill divides the api into different sections
+                for x in ['users', 'messages', 'tags', 'rejects',
+                          'senders', 'urls', 'templates', 'webhooks']:
+                    setattr(self, x, MailSnake(apikey, extra_params,
+                                              api, x))
         self.default_params.update(extra_params)
 
         dc = 'us1'
         if '-' in self.apikey:
             dc = self.apikey.split('-')[1]
         api_info = {
-            'api':('api','1.3/?method='),
-            'sts':('sts','1.0/'),
-            'export':('api','export/1.0/')
+            'api':(dc,'.api.','mailchimp','1.3/?method='),
+            'sts':(dc,'.sts.','mailchimp','1.0/'),
+            'export':(dc,'.api.','mailchimp','export/1.0/'),
+            'mandrill':('','','mandrillapp','api/1.0/'),
         }
-        self.api_url = 'https://%s.%s.mailchimp.com/%s' % \
-                       ((dc,) + api_info[api])
+        self.api_url = 'https://%s%s%s.com/%s' % api_info[api]
 
     def call(self, method, params = {}):
-        url = self.api_url + method
+        url = self.api_url
+        if self.api == 'mandrill':
+			url += (self.api_section + '/' + method + '.json')
+        elif self.api == 'sts':
+            url += (method + '.json/')
+        else:
+            url += method
+        
         all_params = self.default_params.copy()
         all_params.update(params)
-
-        if self.api == 'api':
-            post_data = urllib2.quote(json.dumps(all_params))
-            headers = {'Content-Type':'application/json'}
+        
+        if self.api == 'api' or self.api == 'mandrill':
+            data = json.dumps(all_params)
+            if self.api == 'api':
+                data = urllib2.quote(data)
+            headers = {'content-type':'application/json'}
         else:
-            headers = {'Content-Type':'application/x-www-form-urlencoded'}
-            post_data = http_build_query(all_params)
-            if self.api == 'sts':
-                url += '.json/'
-            else:
-                # Use GET for the Export API
-                url += '?' + post_data
-                post_data = ''
-        request = urllib2.Request(url, post_data, headers)
-        response = urllib2.urlopen(request)
-
+            data = all_params
+            headers = {'content-type':
+                      'application/x-www-form-urlencoded'}
+        
         if self.api == 'export':
-            return [json.loads(i) for i in response.readlines()]
+            request = requests.post(url, params=data, headers=headers)
+            return [json.loads(i) for i in \
+                    request.text.split('\n')[0:-1]]
         else:
-            return json.loads(response.read())
+            request = requests.post(url, data=data, headers=headers)
+            return json.loads(request.text)
 
     def __getattr__(self, method_name):
-
         def get(self, *args, **kwargs):
             params = dict((i,j) for (i,j) in enumerate(args))
             params.update(kwargs)
-            return self.call(method_name, params)
+            # Some mandrill functions use - in the name
+            return self.call(method_name.replace('_', '-'), params)
 
         return get.__get__(self)
-
-##################################################
-# http://www.codigomanso.com/en/2010/04/http_build_query-para-python/
-# By Pau Sanchez
-# Mimics the behaviour of http_build_query PHP function
-# This method can be useful for sending data to flash applications
-##################################################
-def http_build_query(params, topkey = ''): 
-    if len(params) == 0:
-        return ""
-
-    result = ""
- 
-    # is a dictionary?
-    if type (params) is dict:
-        for key in params.keys():
-            newkey = quote (key)
-            if topkey != '':
-              newkey = topkey + quote('[' + key + ']')
- 
-            if type(params[key]) is dict:
-                result += http_build_query (params[key], newkey)
-
-            elif type(params[key]) is list:
-                i = 0
-                for val in params[key]:
-                    result += newkey + quote('[' + str(i) + ']') + \
-                              "=" + quote(str(val)) + "&"
-                    i = i + 1
-
-            # boolean should have special treatment as well
-            elif type(params[key]) is bool:
-                result += newkey + "=" + quote(str(int(params[key]))) + "&"
-
-            # assume string (integers and floats work well)
-            else:
-                result += newkey + "=" + quote(str(params[key])) + "&"
-
-    # remove the last '&'
-    if (result) and (topkey == '') and (result[-1] == '&'):
-        result = result[:-1]
-
-    return result

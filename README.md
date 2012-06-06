@@ -34,7 +34,7 @@ or:
     u'PONG!'
 
 Some Mandrill functions have a dash(-) in the name. Since Python
-function names can't have dashes in them, user underscores(\_) instead:
+function names can't have dashes in them, use underscores(\_) instead:
 
 	>>> mapi = MailSnake('YOUR MANDRILL API KEY', api='mandrill')
 	>>> mapi.messages.send(message={'html':'email html', 'subject':'email subject', 'from_email':'from@example.com', 'from_name':'From Name', 'to':[{'email':'to@example.com', 'name':'To Name'}]})

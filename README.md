@@ -29,15 +29,15 @@ account when using it. Here's an example:
     
 or:
 
-	>>> mapi\_users = MailSnake('YOUR MANDRILL API KEY', api='mandrill', api\_section='users')
-	>>> mapi\_users.ping()
+	>>> mapi_users = MailSnake('YOUR MANDRILL API KEY', api='mandrill', api_section='users')
+	>>> mapi_users.ping()
     u'PONG!'
 
 Some Mandrill functions have a dash(-) in the name. Since Python
 function names can't have dashes in them, user underscores(\_) instead:
 
 	>>> mapi = MailSnake('YOUR MANDRILL API KEY', api='mandrill')
-	>>> mapi.messages.send(message={'html':'email html', 'subject':'email subject', 'from\_email':'from@example.com', 'from\_name':'From Name', 'to':\[{'email':'to@example.com', 'name':'To Name'}\]})
+	>>> mapi.messages.send(message={'html':'email html', 'subject':'email subject', 'from_email':'from@example.com', 'from_name':'From Name', 'to':[{'email':'to@example.com', 'name':'To Name'}]})
     u'PONG!'
 
 Note
@@ -45,7 +45,7 @@ Note
 
 API parameters must be passed by name. For example:
 
-	>>> mcapi.listMemberInfo(id='YOUR LIST ID', email\_address='name@email.com')
+	>>> mcapi.listMemberInfo(id='YOUR LIST ID', email_address='name@email.com')
 
 API Documentation
 -----------------

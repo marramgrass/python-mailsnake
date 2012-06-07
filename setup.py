@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 
-import mailsnake
+author = re.search("__author__ = '([^']+)'",
+                   open('mailsnake/__init__.py').read()).group(1)
+version = re.search("__version__ = '([^']+)'",
+                   open('mailsnake/__init__.py').read()).group(1)
 
 CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',
@@ -15,11 +18,10 @@ CLASSIFIERS = [
 
 KEYWORDS = 'mailchimp api wrapper 1.3'
 
-
 setup(name = 'mailsnake',
-    version = mailsnake.__version__,
+    version = version,
     description = """MailChimp API v1.3 wrapper for Python.""",
-    author = mailsnake.__author__,
+    author = author,
     url = "https://github.com/leftium/mailsnake",
     packages = find_packages(),
     download_url = "http://pypi.python.org/pypi/mailsnake/",

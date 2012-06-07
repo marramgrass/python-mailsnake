@@ -80,10 +80,8 @@ class MailSnake(object):
                 req = requests.post(url, params=data, headers=headers)
             else:
                 req = requests.post(url, data=data, headers=headers)
-        except urllib2.URLError, e:
-            raise NetworkTimeoutException(str(e.reason))
-        except urllib2.HTTPError, e:
-            raise HTTPRequestException(e.code)
+        except requests.exceptions.RequestException, e:
+            raise HTTPRequestException(request.status_code)
 
         try:
             if self.api == 'export':

@@ -2,10 +2,9 @@
 import re
 from setuptools import setup, find_packages
 
-author = re.search("__author__ = '([^']+)'",
-                   open('mailsnake/__init__.py').read()).group(1)
-version = re.search("__version__ = '([^']+)'",
-                   open('mailsnake/__init__.py').read()).group(1)
+msinit = open('mailsnake/__init__.py').read()
+author = re.search("__author__ = '([^']+)'", msinit).group(1)
+version = re.search("__version__ = '([^']+)'", msinit).group(1)
 
 setup(
     name='mailsnake',

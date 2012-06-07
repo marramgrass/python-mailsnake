@@ -1,3 +1,5 @@
+from mailsnake import *
+
 __author__ = 'John-Kim Murphy'
 __copyright__ = 'Copyright 2012, John-Kim Murphy'
 __credits__ = [

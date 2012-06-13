@@ -17,7 +17,7 @@ setup(
     download_url='http://pypi.python.org/pypi/mailsnake/',
     keywords='mailsnake mailchimp api wrapper 1.3',
     zip_safe=True,
-    install_requires=['simplejson', 'requires'],
+    install_requires=['simplejson', 'requests'],
     py_modules=['mailsnake'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

@@ -42,7 +42,7 @@ class MailSnake(object):
     def call(self, method, params = {}):
         url = self.api_url
         if self.api == 'mandrill':
-			url += (self.api_section + '/' + method + '.json')
+            url += (self.api_section + '/' + method + '.json')
         elif self.api == 'sts':
             url += (method + '.json/')
         else:

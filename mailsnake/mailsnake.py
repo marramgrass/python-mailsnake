@@ -1,7 +1,6 @@
 import copy
 import json
 import requests
-import urllib2
 
 class MailSnake(object):
     def __init__(self,
@@ -42,7 +41,7 @@ class MailSnake(object):
     def call(self, method, params = {}):
         url = self.api_url
         if self.api == 'mandrill':
-			url += (self.api_section + '/' + method + '.json')
+            url += (self.api_section + '/' + method + '.json')
         elif self.api == 'sts':
             url += (method + '.json/')
         else:
@@ -54,7 +53,7 @@ class MailSnake(object):
         if self.api == 'api' or self.api == 'mandrill':
             data = json.dumps(all_params)
             if self.api == 'api':
-                data = urllib2.quote(data)
+                data = requests.utils.quote(data)
             headers = {'content-type':'application/json'}
         else:
             data = all_params

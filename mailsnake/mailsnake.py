@@ -81,7 +81,7 @@ class MailSnake(object):
             else:
                 req = requests.post(url, data=data, headers=headers)
         except requests.exceptions.RequestException, e:
-            raise HTTPRequestException(req.status_code)
+            raise HTTPRequestException(e)
             
         if req.status_code != 200:
             raise HTTPRequestException(req.status_code)

@@ -84,7 +84,7 @@ class MailSnake(object):
             raise HTTPRequestException(request.status_code)
             
         if request.status_code != 200:
-			raise HTTPRequestException(request.status_code)
+            raise HTTPRequestException(request.status_code)
 
         try:
             if self.api == 'export':

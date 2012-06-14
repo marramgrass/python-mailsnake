@@ -1,6 +1,14 @@
 #!/usr/bin/env python
-import re
+import re, sys
 from setuptools import setup, find_packages
+
+# dep sugar.
+_ver = sys.version_info
+
+if _ver[0] == 2:
+    dep = ['simplejson', 'requests']
+elif _ver[0] == 3:
+    dep = ['requests']
 
 msinit = open('mailsnake/__init__.py').read()
 author = re.search("__author__ = '([^']+)'", msinit).group(1)
@@ -17,7 +25,7 @@ setup(
     download_url='http://pypi.python.org/pypi/mailsnake/',
     keywords='mailsnake mailchimp api wrapper 1.3',
     zip_safe=True,
-    install_requires=['simplejson', 'requests'],
+    install_requires=dep,
     py_modules=['mailsnake'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

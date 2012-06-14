@@ -1,7 +1,7 @@
 MailSnake
 =========
 
-``MailSnake`` is a Python wrapper for `MailChimp API 1.3 <http://www.mailchimp.com/api/1.3/>`_
+``MailSnake`` is a Python wrapper for `MailChimp API 1.3 <http://www.mailchimp.com/api/1.3/>`_ (as well as the `STS API <http://apidocs.mailchimp.com/sts/1.0/>`_, `Export API <http://apidocs.mailchimp.com/export/>`_, and `Mandrill API <http://mandrillapp.com/api/docs/>`_)
 
 Installation
 ------------
@@ -25,6 +25,24 @@ Basic Ping
         ms.ping() # returns "Everything's Chimpy!"
     except MailSnakeException:
         print 'An error occurred. :('
+
+Mandrill Ping
+~~~~~~~~~~~~~
+
+::
+
+    mapi = MailSnake('YOUR MANDRILL API KEY', api='mandrill')
+    mapi.users.ping() # returns "PONG!"
+
+
+STS Example
+~~~~~~~~~~~
+
+::
+
+    mcsts = MailSnake('YOUR MAILCHIMP API KEY', api='sts')
+    mcsts.GetSendQuota() # returns something like {'Max24HourSend': '10000.0', 'SentLast24Hours': '0.0', 'MaxSendRate': '5.0'}
+
 
 Catching Errors
 ~~~~~~~~~~~~~~~

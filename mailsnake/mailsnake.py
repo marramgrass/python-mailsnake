@@ -29,6 +29,11 @@ class MailSnake(object):
             Cache API key and address.
         """
         self.apikey = apikey
+
+        ACCEPTED_APIS = ('api', 'sts', 'export', 'mandrill')
+        if not api in ACCEPTED_APIS:
+            raise MailSnakeException('The API "%s" is not supported.') % api
+
         self.api = api
 
         self.default_params = {'apikey': apikey}

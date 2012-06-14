@@ -1,7 +1,6 @@
 """ MailSnake """
 
 import requests
-import urllib2
 
 try:
     import simplejson as json
@@ -85,8 +84,8 @@ class MailSnake(object):
         if self.api == 'api' or self.api == 'mandrill':
             data = json.dumps(params)
             if self.api == 'api':
-                data = urllib2.quote(data)
-            headers = {'content-type': 'application/json'}
+                data = requests.utils.quote(data)
+            headers = {'content-type':'application/json'}
         else:
             data = params
             headers = {
@@ -98,7 +97,7 @@ class MailSnake(object):
                 req = requests.post(url, params=data, headers=headers)
             else:
                 req = requests.post(url, data=data, headers=headers)
-        except requests.exceptions.RequestException, e:
+        except requests.exceptions.RequestException as e:
             raise HTTPRequestException(e.message)
 
         if req.status_code != 200:
@@ -110,7 +109,7 @@ class MailSnake(object):
                       req.text.split('\n')[0:-1]]
             else:
                 rsp = json.loads(req.text)
-        except ValueError, e:
+        except ValueError as e:
             raise ParseException(e.message)
 
         if not isinstance(rsp, (int, bool, basestring)) and \

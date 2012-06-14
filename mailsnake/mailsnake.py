@@ -1,3 +1,5 @@
+""" MailSnake """
+
 import requests
 import urllib2
 
@@ -32,7 +34,7 @@ class MailSnake(object):
         self.default_params = {'apikey': apikey}
         extra_params = extra_params or {}
         if api == 'mandrill':
-            self.default_params = {'key':apikey}
+            self.default_params = {'key': apikey}
             if api_section != '':
                 self.api_section = api_section
             else:
@@ -46,17 +48,27 @@ class MailSnake(object):
         if '-' in self.apikey:
             self.dc = self.apikey.split('-')[1]
         api_info = {
-            'api':(self.dc,'.api.','mailchimp','1.3/?method='),
-            'sts':(self.dc,'.sts.','mailchimp','1.0/'),
-            'export':(self.dc,'.api.','mailchimp','export/1.0/'),
-            'mandrill':('','','mandrillapp','api/1.0/'),
+            'api': (self.dc, '.api.', 'mailchimp', '1.3/?method='),
+            'sts': (self.dc, '.sts.', 'mailchimp', '1.0/'),
+            'export': (self.dc, '.api.', 'mailchimp', 'export/1.0/'),
+            'mandrill': ('', '', 'mandrillapp', 'api/1.0/'),
         }
         self.api_url = 'https://%s%s%s.com/%s' % api_info[api]
+
+    def __repr__(self):
+        if self.api == 'api':
+            api = 'API v3'
+        elif self.api == 'sts':
+            api = self.api.upper() + ' API'
+        else:
+            api = self.api.capitalize() + ' API'
+
+        return u'<MailSnake %s: %s>' % (api, self.apikey)
 
     def call(self, method, params=None):
         url = self.api_url
         if self.api == 'mandrill':
-			url += (self.api_section + '/' + method + '.json')
+            url += (self.api_section + '/' + method + '.json')
         elif self.api == 'sts':
             url += (method + '.json/')
         else:
@@ -69,20 +81,21 @@ class MailSnake(object):
             data = json.dumps(params)
             if self.api == 'api':
                 data = urllib2.quote(data)
-            headers = {'content-type':'application/json'}
+            headers = {'content-type': 'application/json'}
         else:
             data = params
-            headers = {'content-type':
-                      'application/x-www-form-urlencoded'}
-        
+            headers = {
+                'content-type': 'application/x-www-form-urlencoded'
+            }
+
         try:
             if self.api == 'export':
                 req = requests.post(url, params=data, headers=headers)
             else:
                 req = requests.post(url, data=data, headers=headers)
         except requests.exceptions.RequestException, e:
-            raise HTTPRequestException(e)
-            
+            raise HTTPRequestException(e.message)
+
         if req.status_code != 200:
             raise HTTPRequestException(req.status_code)
 
@@ -92,7 +105,7 @@ class MailSnake(object):
                       req.text.split('\n')[0:-1]]
             else:
                 rsp = json.loads(req.text)
-        except json.JSONDecodeError, e:
+        except ValueError, e:
             raise ParseException(e.message)
 
         if not isinstance(rsp, (int, bool, basestring)) and \

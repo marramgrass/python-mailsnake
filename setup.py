@@ -1,23 +1,19 @@
 #!/usr/bin/env python
-import re
-from setuptools import setup, find_packages
 
-msinit = open('mailsnake/__init__.py').read()
-author = re.search("__author__ = '([^']+)'", msinit).group(1)
-version = re.search("__version__ = '([^']+)'", msinit).group(1)
+from setuptools import setup, find_packages
 
 setup(
     name='mailsnake',
-    version=version,
-    description='MailChimp API v1.3 wrapper for Python.',
+    version='1.5.0',
+    description='MailChimp API v1.3, STS, Export, Mandrill wrapper for Python.',
     long_description=open('README.rst').read(),
-    author=author,
+    author='John-Kim Murphy',
     url='https://github.com/michaelhelmick/python-mailsnake',
     packages=find_packages(),
     download_url='http://pypi.python.org/pypi/mailsnake/',
-    keywords='mailsnake mailchimp api wrapper 1.3',
+    keywords='mailsnake mailchimp api wrapper export mandrill sts 1.3',
     zip_safe=True,
-    install_requires=['simplejson', 'requires'],
+    install_requires=['simplejson', 'requests>=0.13.1'],
     py_modules=['mailsnake'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

@@ -1,5 +1,5 @@
 import requests
-from requests.compat import basestring, bytes, str
+from requests.compat import basestring
 
 try:
     import simplejson as json

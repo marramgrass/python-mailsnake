@@ -79,7 +79,7 @@ class MailSnake(object):
                 req = requests.post(url, params=data, headers=headers)
             else:
                 req = requests.post(url, data=data, headers=headers)
-        except requests.exceptions.RequestException, e:
+        except requests.exceptions.RequestException as e:
             raise HTTPRequestException(e)
             
         if req.status_code != 200:
@@ -91,7 +91,7 @@ class MailSnake(object):
                       req.text.split('\n')[0:-1]]
             else:
                 rsp = json.loads(req.text)
-        except json.JSONDecodeError, e:
+        except json.JSONDecodeError as e:
             raise ParseException(e.message)
 
         if not isinstance(rsp, (int, bool, basestring)) and \

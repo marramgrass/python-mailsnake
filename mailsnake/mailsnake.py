@@ -1,6 +1,6 @@
 """ MailSnake """
 
-import requests
+import urllib
 import urllib2
 
 try:
@@ -95,21 +95,21 @@ class MailSnake(object):
 
         try:
             if self.api == 'export':
-                req = requests.post(url, params=data, headers=headers)
+                req = urllib2.urlopen(url, data)
             else:
-                req = requests.post(url, data=data, headers=headers)
-        except requests.exceptions.RequestException, e:
-            raise HTTPRequestException(e.message)
-
-        if req.status_code != 200:
-            raise HTTPRequestException(req.status_code)
+                req = urllib2.urlopen(url, data)
+        except urllib2.HTTPError, e:
+            raise HTTPRequestException(e.read())
+        except urllib2.URLError, e:
+            raise HTTPRequestException(e.reason)
 
         try:
+            response_data = req.read()
             if self.api == 'export':
                 rsp = [json.loads(i) for i in \
-                      req.text.split('\n')[0:-1]]
+                      response_data.split('\n')[0:-1]]
             else:
-                rsp = json.loads(req.text)
+                rsp = json.loads(response_data)
         except ValueError, e:
             raise ParseException(e.message)
 
